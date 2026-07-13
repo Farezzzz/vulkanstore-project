@@ -17,8 +17,9 @@
 
     <div class="mb-6 flex border-b border-gray-200">
         <a href="{{ route('pemasok.index') }}" class="border-b-2 border-[#855300] px-6 py-3 text-[12px] font-semibold uppercase text-[#091426]">Data Pemasok</a>
-        <a href="#" class="border-b-2 border-transparent px-6 py-3 text-[12px] font-semibold uppercase text-[#45474C] transition hover:text-[#091426]">Data Barang</a>
-        <a href="#" class="border-b-2 border-transparent px-6 py-3 text-[12px] font-semibold uppercase text-[#45474C] transition hover:text-[#091426]">Data Pengguna</a>
+        {{-- LINK SUDAH DIPERBAIKI DI BAWAH INI --}}
+        <a href="{{ route('barang.index') }}" class="border-b-2 border-transparent px-6 py-3 text-[12px] font-semibold uppercase text-[#45474C] transition hover:text-[#091426]">Data Barang</a>
+        <a href="{{ route('pengguna.index') }}" class="border-b-2 border-transparent px-6 py-3 text-[12px] font-semibold uppercase text-[#45474C] transition hover:text-[#091426]">Data Pengguna</a>
     </div>
 
     <div class="w-full overflow-hidden rounded-[8px] border border-gray-200 bg-white shadow-sm">
