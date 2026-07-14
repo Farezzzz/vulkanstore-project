@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pengguna extends Authenticatable
 {
-    use Notifiable;
+    use SoftDeletes;
 
     protected $table = 'pengguna';
 
@@ -26,6 +27,16 @@ class Pengguna extends Authenticatable
     protected $hidden = [
         'Kata_Sandi',
     ];
+
+    public function penerimaan()
+    {
+        return $this->hasMany(Penerimaan::class, 'ID_Pengguna', 'ID_Pengguna');
+    }
+
+    public function pesanan()
+    {
+        return $this->hasMany(Pesanan::class, 'ID_Pengguna', 'ID_Pengguna');
+    }   
 
     public function getAuthPassword()
     {

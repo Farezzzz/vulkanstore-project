@@ -36,7 +36,6 @@ class BarangController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi input barang
         $request->validate([
             'Nama_Barang' => 'required|string|max:50',
             'Kategori_Barang' => 'required|string|max:50', 
@@ -52,7 +51,6 @@ class BarangController extends Controller
 
     public function update(Request $request, string $id)
     {
-        // Validasi input update barang
         $request->validate([
             'Nama_Barang' => 'required|string|max:50',
             'Kategori_Barang' => 'required|string|max:50',

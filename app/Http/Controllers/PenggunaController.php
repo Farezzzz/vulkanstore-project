@@ -12,7 +12,6 @@ class PenggunaController extends Controller
     {
         $query = Pengguna::query();
 
-        // Pencarian berdasarkan Nama Lengkap atau ID Pengguna
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
             $query->where(function($q) use ($search) {
@@ -21,15 +20,12 @@ class PenggunaController extends Controller
             });
         }
 
-        // Filter berdasarkan Role (Misal: Admin, Gudang, dll)
         if ($request->has('kategori') && $request->kategori != '') {
             $query->where('Role', $request->kategori);
         }
 
-        // Urutkan berdasarkan ID_Pengguna terbaru dan batasi 5 data per halaman
         $pengguna = $query->latest('ID_Pengguna')->paginate(5);
 
-        // Mengarah ke folder views/master/pengguna/index.blade.php
         return view('master.pengguna.index', compact('pengguna'));
     }
 
@@ -37,7 +33,6 @@ class PenggunaController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi input data pengguna
         $request->validate([
             'Nama_Lengkap' => 'required|string|max:50',
             'Role' => 'required|string|max:15',
@@ -47,7 +42,6 @@ class PenggunaController extends Controller
         ]);
 
         $data = $request->all();
-        // Enkripsi password sebelum disimpan ke database
         $data['Kata_Sandi'] = Hash::make($request->Kata_Sandi);
 
         Pengguna::create($data);
@@ -61,7 +55,6 @@ class PenggunaController extends Controller
     {
         $pengguna = Pengguna::findOrFail($id);
 
-        // Validasi input update data pengguna
         $request->validate([
             'Nama_Lengkap' => 'required|string|max:50',
             'Role' => 'required|string|max:15',
@@ -71,7 +64,6 @@ class PenggunaController extends Controller
 
         $data = $request->all();
 
-        // Jika form password diisi, enkripsi baru. Jika kosong, pakai password lama.
         if ($request->filled('Kata_Sandi')) {
             $data['Kata_Sandi'] = Hash::make($request->Kata_Sandi);
         } else {

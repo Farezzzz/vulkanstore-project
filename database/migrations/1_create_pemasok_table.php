@@ -8,12 +8,14 @@
         public function up(): void
         {
             Schema::create('pemasok', function (Blueprint $table) {
-                $table->integer('ID_Pemasok', true);
+                $table->increments('ID_Pemasok'); // PK
                 $table->string('Nama_Pemasok', 50);
                 $table->string('Kontak_Pemasok', 15);
-                $table->enum('Kategori_Pemasok', ['INTERNAL', 'EXTERNAL (DIVISI VULKANISIR)']);
+                $table->enum('Kategori_Pemasok', ['INTERNAL (DIVISI VULKANISIR)', 'EXTERNAL']); 
                 $table->timestamps();
             });
+
+            DB::statement('ALTER TABLE pemasok MODIFY ID_Pemasok INT(4) UNSIGNED NOT NULL AUTO_INCREMENT');
         }
 
         public function down(): void

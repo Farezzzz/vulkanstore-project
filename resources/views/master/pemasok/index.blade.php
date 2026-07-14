@@ -29,7 +29,7 @@
                 <div class="flex items-center gap-4">
                     <div class="relative">
                         <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama pemasok..." class="h-[38px] w-[320px] rounded border border-gray-300 pl-10 pr-4 text-sm text-[#091426] outline-none focus:border-[#091426] focus:ring-1 focus:ring-[#091426]">
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari ID atau Nama Pemasok..." class="h-[38px] w-[320px] rounded border border-gray-300 pl-10 pr-4 text-sm text-[#091426] outline-none focus:border-[#091426] focus:ring-1 focus:ring-[#091426]">
                     </div>
 
                     @if(request('search') || request('kategori'))

@@ -32,7 +32,7 @@
         <div class="p-6 border-b border-gray-100">
             <form action="{{ route('pengguna.index') }}" method="GET" class="relative w-[300px]">
                 <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-base"></i>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama atau email..." 
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari ID atau Nama Pengguna..." 
                     class="h-[40px] w-full rounded border border-gray-200 pl-10 pr-4 text-[13px] outline-none focus:border-gray-400">
             </form>
         </div>
@@ -78,7 +78,7 @@
                                 <i class="ri-pencil-line text-base"></i>
                             </button>
                             {{-- PERBAIKAN: Mengubah warna default menjadi merah (text-red-500) sama persis seperti gambar 2 --}}
-                            <button onclick="bukaModalHapus({{ $item->ID_Pengguna }}, '{{ $item->Nama_Lengkap }}')" class="text-red-500 hover:text-red-700 transition">
+                            <button onclick="confirmDelete()" class="text-red-500 hover:text-red-700 transition">
                                 <i class="ri-delete-bin-line text-base"></i>
                             </button>
                         </div>
@@ -189,23 +189,7 @@
         <form method="dialog" class="modal-backdrop"><button>close</button></form>
     </dialog>
 
-    {{-- ==================== MODAL HAPUS ==================== --}}
-    <dialog id="modal_hapus" class="modal">
-        <div class="modal-box rounded-[8px] bg-white p-6 shadow-lg max-w-sm text-center">
-            <i class="ri-error-warning-line text-5xl text-red-500 block mb-2"></i>
-            <h3 class="text-[18px] font-bold text-[#091426] mb-1">Hapus Pengguna?</h3>
-            <p class="text-[13px] text-[#45474C] mb-6">Kamu akan menghapus pengguna <span id="hapus_nama" class="font-bold text-red-600"></span>. Tindakan ini tidak dapat dibatalkan.</p>
-            <form id="form_hapus" method="POST" class="flex justify-center gap-3">
-                @csrf
-                @method('DELETE')
-                <button type="button" onclick="modal_hapus.close()" class="h-[40px] rounded border border-gray-300 px-5 text-[12px] font-semibold text-[#45474C]">Batal</button>
-                <button type="submit" class="h-[40px] rounded bg-red-600 px-5 text-[12px] font-semibold text-white hover:bg-red-700">Ya, Hapus</button>
-            </form>
-        </div>
-        <form method="dialog" class="modal-backdrop"><button>close</button></form>
-    </dialog>
 
-    {{-- Script Otomatis Mengisi Data Modal Edit dan Hapus --}}
     <script>
         function bukaModalEdit(user) {
             document.getElementById('form_edit').action = `/pengguna/${user.ID_Pengguna}`;
@@ -220,6 +204,21 @@
             document.getElementById('form_hapus').action = `/pengguna/${id}`;
             document.getElementById('hapus_nama').textContent = nama;
             modal_hapus.showModal();
+        }
+
+        function confirmDelete(button) {
+            Swal.fire({
+                title: 'Yakin mau dihapus?',
+                text: "Data yang dihapus tidak bisa dipulihkan kembali!",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#091426',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) { button.closest('.delete-form').submit(); }
+            });
         }
     </script>
 
