@@ -9,18 +9,10 @@
     </div>
 
     <nav class="flex-1">
-        <a href="{{ route('dashboard') }}"
-            class="flex h-11 items-center gap-3 border-l-4 pl-5 text-[12px] transition
-            {{ request()->routeIs('dashboard')
-                ? 'border-[#855300] bg-[#E8EAED] font-semibold text-[#091426]'
-                : 'border-transparent font-semibold text-[#45474C] hover:bg-[#ECEFF1] hover:text-[#091426]' }}">
-            <i class="ri-dashboard-line text-[18px]"></i>
-            Dashboard
-        </a>
-
+    
         <a href="{{ route('pemasok.index') }}"
             class="flex h-11 items-center gap-3 border-l-4 pl-5 text-[12px] transition
-            {{ request()->routeIs('pemasok.*')
+            {{ request()->routeIs(['pemasok.*', 'barang.*', 'pengguna.*'])
                 ? 'border-[#855300] bg-[#E8EAED] font-semibold text-[#091426]'
                 : 'border-transparent font-semibold text-[#45474C] hover:bg-[#ECEFF1] hover:text-[#091426]' }}">
             <i class="ri-database-2-line text-[18px]"></i>

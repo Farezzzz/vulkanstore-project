@@ -39,13 +39,13 @@ class MasterDataSeeder extends Seeder
         Pemasok::create([
             'Nama_Pemasok' => 'PT. Logistik Jaya',
             'Kontak_Pemasok' => '0812-3456-7890',
-            'Kategori_Pemasok' => 'INTERNAL',
+            'Kategori_Pemasok' => 'INTERNAL (DIVISI VULKANISIR)',
         ]);
 
         Pemasok::create([
             'Nama_Pemasok' => 'CV. Berkah Abadi',
             'Kontak_Pemasok' => '0856-9876-5432',
-            'Kategori_Pemasok' => 'EXTERNAL (DIVISI VULKANISIR)',
+            'Kategori_Pemasok' => 'EXTERNAL',
         ]);
 
         Barang::create([

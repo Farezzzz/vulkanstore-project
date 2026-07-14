@@ -18,4 +18,9 @@ class Pemasok extends Model
         'Kontak_Pemasok',
         'Kategori_Pemasok',
     ];
+
+    public function penerimaan()
+    {
+        return $this->hasMany(Penerimaan::class, 'ID_Pemasok', 'ID_Pemasok');
+    }
 }
