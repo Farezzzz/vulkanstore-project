@@ -36,7 +36,7 @@ class Pengguna extends Authenticatable
     public function pesanan()
     {
         return $this->hasMany(Pesanan::class, 'ID_Pengguna', 'ID_Pengguna');
-    }   
+    }
 
     public function getAuthPassword()
     {

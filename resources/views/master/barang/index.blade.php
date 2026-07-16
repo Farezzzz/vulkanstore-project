@@ -33,6 +33,11 @@
                         <a href="{{ route('barang.index') }}" class="flex h-[38px] items-center rounded bg-red-100 px-4 text-[12px] font-bold text-red-600 transition hover:bg-red-200">Reset</a>
                     @endif
                 </div>
+                <select name="stok_status" onchange="this.form.submit()" class="h-[38px] cursor-pointer rounded border border-gray-300 px-4 text-[12px] font-semibold text-[#45474C] outline-none">
+                    <option value="">Filter</option>
+                    <option value="menipis" {{ request('stok_status') == 'menipis' ? 'selected' : '' }}>Stok Menipis (<= 15) </option>
+                    <option value="aman" {{ request('stok_status') == 'aman' ? 'selected' : '' }}>Stok Aman (> 15) </option>
+                </select>
             </form>
         </div>
 
@@ -78,7 +83,15 @@
                 </tbody>
             </table>
         </div>
-        <div class="border-t border-gray-200 px-6 py-4">{{ $barang->withQueryString()->links() }}</div>
+        {{-- Pagination --}}
+        <div class="border-t border-gray-200 px-6 py-4 flex items-center justify-between">
+            <span class="text-[14px] text-[#45474C]">
+                Menampilkan {{ $barang->firstItem() ?? 0 }} - {{ $barang->lastItem() ?? 0 }} dari {{ $barang->total() }} barang
+            </span>
+            <div>
+                {{ $barang->withQueryString()->links() }}
+            </div>
+        </div>
     </div>
 
     {{-- MODAL TAMBAH --}}

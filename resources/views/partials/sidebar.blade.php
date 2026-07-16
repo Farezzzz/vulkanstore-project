@@ -9,7 +9,7 @@
     </div>
 
     <nav class="flex-1">
-    
+
         <a href="{{ route('pemasok.index') }}"
             class="flex h-11 items-center gap-3 border-l-4 pl-5 text-[12px] transition
             {{ request()->routeIs(['pemasok.*', 'barang.*', 'pengguna.*'])
@@ -19,10 +19,12 @@
             Master Data
         </a>
 
-        <a href="#"
-            class="flex h-11 items-center gap-3 border-l-4 border-transparent pl-5 text-[12px] font-semibold text-[#45474C] transition hover:bg-[#ECEFF1] hover:text-[#091426]">
-            <i class="ri-inbox-archive-line text-[18px]"></i>
-            Penerimaan
+        <a href="{{ route('penerimaan.index') }}"
+            class="flex h-11 items-center gap-3 border-l-4 pl-5 text-[12px] transition
+            {{ request()->routeIs('penerimaan.*')
+                ? 'border-[#855300] bg-[#E8EAED] font-semibold text-[#091426]'
+                : 'border-transparent font-semibold text-[#45474C] hover:bg-[#ECEFF1] hover:text-[#091426]' }}">
+            <i class="ri-box-3-line text-[18px]"></i> Penerimaan
         </a>
 
        

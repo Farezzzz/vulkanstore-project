@@ -17,7 +17,6 @@
 
     <div class="mb-6 flex border-b border-gray-200">
         <a href="{{ route('pemasok.index') }}" class="border-b-2 border-[#855300] px-6 py-3 text-[12px] font-semibold uppercase text-[#091426]">Data Pemasok</a>
-        {{-- LINK SUDAH DIPERBAIKI DI BAWAH INI --}}
         <a href="{{ route('barang.index') }}" class="border-b-2 border-transparent px-6 py-3 text-[12px] font-semibold uppercase text-[#45474C] transition hover:text-[#091426]">Data Barang</a>
         <a href="{{ route('pengguna.index') }}" class="border-b-2 border-transparent px-6 py-3 text-[12px] font-semibold uppercase text-[#45474C] transition hover:text-[#091426]">Data Pengguna</a>
     </div>
@@ -32,7 +31,7 @@
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari ID atau Nama Pemasok..." class="h-[38px] w-[320px] rounded border border-gray-300 pl-10 pr-4 text-sm text-[#091426] outline-none focus:border-[#091426] focus:ring-1 focus:ring-[#091426]">
                     </div>
 
-                    @if(request('search') || request('kategori'))
+                    @if(request('search'))
                         <a href="{{ route('pemasok.index') }}" class="flex h-[38px] items-center rounded bg-red-100 px-4 text-[12px] font-bold text-red-600 transition hover:bg-red-200">Reset</a>
                     @endif
                 </div>
@@ -115,8 +114,14 @@
             </table>
         </div>
 
-        <div class="border-t border-gray-200 px-6 py-4">
-            {{ $pemasok->withQueryString()->links() }}
+        {{-- Pagination --}}
+        <div class="border-t border-gray-200 px-6 py-4 flex items-center justify-between">
+            <span class="text-[14px] text-[#45474C]">
+                Menampilkan {{ $pemasok->firstItem() ?? 0 }} - {{ $pemasok->lastItem() ?? 0 }} dari {{ $pemasok->total() }} pemasok
+            </span>
+            <div>
+                {{ $pemasok->withQueryString()->links() }}
+            </div>
         </div>
     </div>
 

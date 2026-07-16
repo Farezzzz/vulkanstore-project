@@ -2,7 +2,6 @@
 @section('title', 'Data Pengguna')
 @section('content')
 
-    {{-- Breadcrumbs --}}
     <div class="mb-2 text-[12px] font-semibold uppercase tracking-wide text-[#45474C]">
         DATA MASTER <span class="mx-2">></span> <span class="text-[#091426]">PENGGUNA</span>
     </div>
@@ -10,8 +9,6 @@
     {{-- Header & Tombol Tambah --}}
     <div class="mb-6 flex items-center justify-between">
         <h1 class="text-[32px] font-bold text-[#091426]">Data Pengguna</h1>
-
-        {{-- PERBAIKAN: Menggunakan ikon plus (+) dan padding dinamis agar tidak terpotong --}}
         <button onclick="modal_tambah.showModal()" class="flex h-[40px] items-center justify-center gap-2 rounded bg-[#091426] px-4 text-[13px] font-semibold text-white shadow-sm transition hover:bg-slate-800">
             <i class="ri-add-line text-base"></i>
             Tambah Pengguna
@@ -27,13 +24,26 @@
 
     {{-- Container Tabel & Filter --}}
     <div class="w-full overflow-hidden rounded-[8px] border border-gray-200 bg-white shadow-sm">
-        
+
         {{-- Bar Pencarian --}}
-        <div class="p-6 border-b border-gray-100">
-            <form action="{{ route('pengguna.index') }}" method="GET" class="relative w-[300px]">
-                <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-base"></i>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari ID atau Nama Pengguna..." 
-                    class="h-[40px] w-full rounded border border-gray-200 pl-10 pr-4 text-[13px] outline-none focus:border-gray-400">
+        <div class="px-6 py-5">
+            <form action="{{ route('pengguna.index') }}" method="GET" class="flex w-full items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari ID atau Nama Pengguna..." class="h-[38px] w-[320px] rounded border border-gray-300 pl-10 pr-4 text-sm text-[#091426] outline-none focus:border-[#091426] focus:ring-1 focus:ring-[#091426]">
+                    </div>
+
+                    @if(request()->anyFilled(['search']))
+                        <a href="{{ route('pengguna.index') }}" class="flex h-[38px] items-center rounded bg-red-100 px-4 text-[12px] font-bold text-red-600 transition hover:bg-red-200">Reset</a>
+                    @endif
+                </div>
+
+                <select name="status" onchange="this.form.submit()" class="h-[38px] cursor-pointer rounded border border-gray-300 px-4 text-[12px] font-semibold text-[#45474C] outline-none hover:bg-gray-50 focus:border-[#091426]">
+                    <option value="">Filter</option>
+                    <option value="Aktif" {{ request('status') == 'Aktif' ? 'selected' : '' }}>Aktif</option>
+                    <option value="Tidak Aktif" {{ request('status') == 'Tidak Aktif' ? 'selected' : '' }}>Tidak Aktif</option>
+                </select>
             </form>
         </div>
 
@@ -52,11 +62,11 @@
             <tbody class="divide-y divide-gray-200 bg-white">
                 @forelse($pengguna as $item)
                 <tr class="hover:bg-gray-50/70 transition">
-                    <td class="px-6 py-4 font-medium text-gray-900">{{ $item->ID_Pengguna }}</td>
+                    <td class="px-6 py-4 font-semibold text-[#091426]">{{ $item->ID_Pengguna }}</td>
                     <td class="px-6 py-4 font-semibold text-[#091426]">{{ $item->Nama_Lengkap }}</td>
-                    <td class="px-6 py-4">{{ $item->Email }}</td>
-                    <td class="px-6 py-4">
-                        <span class="uppercase text-slate-700 font-medium">
+                    <td class="px-6 py-4 font-semibold text-[#091426]">{{ $item->Email }}</td>
+                    <td class="px-6 py-4 font-semibold text-[#091426]">
+                        <span class="uppercasefont-semibold text-[#091426]">
                             {{ $item->Role }}
                         </span>
                     </td>
@@ -77,10 +87,15 @@
                             <button onclick="bukaModalEdit({{ json_encode($item) }})" class="text-gray-400 hover:text-blue-600 transition">
                                 <i class="ri-pencil-line text-base"></i>
                             </button>
-                            {{-- PERBAIKAN: Mengubah warna default menjadi merah (text-red-500) sama persis seperti gambar 2 --}}
-                            <button onclick="confirmDelete()" class="text-red-500 hover:text-red-700 transition">
-                                <i class="ri-delete-bin-line text-base"></i>
-                            </button>
+                            @if(auth()->id() != $item->ID_Pengguna)
+                                <form action="{{ route('pengguna.destroy', $item->ID_Pengguna) }}" method="POST" class="delete-form">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="text-red-500 hover:text-red-700" onclick="confirmDelete(this)">
+                                        <i class="ri-delete-bin-line text-[18px]"></i>
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                     </td>
                 </tr>
@@ -95,14 +110,17 @@
         </table>
 
         {{-- Pagination --}}
-        @if($pengguna->hasPages())
-        <div class="p-4 border-t border-gray-200 bg-gray-50">
-            {{ $pengguna->withQueryString()->links() }}
+        <div class="border-t border-gray-200 px-6 py-4 flex items-center justify-between">
+            <span class="text-[14px] text-[#45474C]">
+                Menampilkan {{ $pengguna->firstItem() ?? 0 }} - {{ $pengguna->lastItem() ?? 0 }} dari {{ $pengguna->total() }} pengguna
+            </span>
+            <div>
+                {{ $pengguna->withQueryString()->links() }}
+            </div>
         </div>
-        @endif
     </div>
 
-    {{-- ==================== MODAL TAMBAH ==================== --}}
+    {{-- MODAL TAMBAH --}}
     <dialog id="modal_tambah" class="modal">
         <div class="modal-box rounded-[8px] bg-white p-6 shadow-lg max-w-md">
             <h3 class="mb-5 text-[20px] font-bold text-[#091426]">Tambah Pengguna Baru</h3>
@@ -110,12 +128,10 @@
                 @csrf
                 <div>
                     <label class="block text-[12px] font-semibold text-[#45474C] mb-1">Nama Lengkap</label>
-                    {{-- PERBAIKAN 1: Menambahkan placeholder contoh nama --}}
                     <input type="text" name="Nama_Lengkap" required placeholder="Contoh: Budi Pratama" class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400">
                 </div>
                 <div>
                     <label class="block text-[12px] font-semibold text-[#45474C] mb-1">Email</label>
-                    {{-- PERBAIKAN 2: Menambahkan placeholder contoh email --}}
                     <input type="email" name="Email" required placeholder="Contoh: budi@vulkanstore.com" class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400">
                 </div>
                 <div>
@@ -134,7 +150,6 @@
                     </select>
                 </div>
 
-                {{-- PERBAIKAN 3: Spacer div setinggi 24px (h-6) agar tombol tidak menempel --}}
                 <div class="h-6"></div>
 
                 <div class="flex justify-end gap-3 pt-2">
@@ -145,7 +160,7 @@
         </div>
         <form method="dialog" class="modal-backdrop"><button>close</button></form>
     </dialog>
-    {{-- ==================== MODAL EDIT ==================== --}}
+    {{-- {{MODAL EDIT }} --}}
     <dialog id="modal_edit" class="modal">
         <div class="modal-box rounded-[8px] bg-white p-6 shadow-lg max-w-md">
             <h3 class="mb-5 text-[20px] font-bold text-[#091426]">Ubah Data Pengguna</h3>
@@ -162,7 +177,6 @@
                 </div>
                 <div>
                     <label class="block text-[12px] font-semibold text-[#45474C] mb-1">Role</label>
-                    {{-- PERBAIKAN 1: Ditambahkan atribut 'readonly' dan styling background abu-abu tipis biar mutlak ga bisa diedit --}}
                     <input type="text" id="edit_role" name="Role" readonly class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none bg-gray-50 text-gray-500 cursor-not-allowed">
                 </div>
                 <div>
@@ -176,10 +190,7 @@
                         <option value="Tidak Aktif">Tidak Aktif</option>
                     </select>
                 </div>
-                
-                {{-- SOLUSI NYATA: Spacer div setinggi 24px (h-6) untuk memaksa tombol turun kebawah --}}
                 <div class="h-6"></div>
-
                 <div class="flex justify-end gap-3 pt-2">
                     <button type="button" onclick="modal_edit.close()" class="h-[40px] rounded border border-gray-300 px-5 text-[12px] font-semibold text-[#45474C] bg-white hover:bg-gray-50 transition">Batal</button>
                     <button type="submit" class="h-[40px] rounded bg-[#091426] px-5 text-[12px] font-semibold text-white hover:bg-slate-800 transition">Simpan Perubahan</button>
