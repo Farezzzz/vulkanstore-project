@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -11,7 +12,7 @@ return new class extends Migration
         Schema::create('detail_pesanan', function (Blueprint $table) {
             $table->unsignedInteger('ID_Pesanan');
             $table->unsignedInteger('ID_Barang');
-            $table->integer('Kuantitas'); 
+            $table->integer('Kuantitas');
 
             $table->primary(['ID_Pesanan', 'ID_Barang']);
             $table->foreign('ID_Pesanan')->references('ID_Pesanan')->on('pesanan')->onDelete('cascade');

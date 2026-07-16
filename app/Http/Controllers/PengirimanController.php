@@ -9,119 +9,86 @@ use Illuminate\Support\Facades\DB;
 
 class PengirimanController extends Controller
 {
-    /**
-     * Menampilkan daftar pengiriman
-     */
     public function index(Request $request)
     {
-        $query = Pengiriman::with('pesanan'); 
+        $query = Pengiriman::with('pesanan');
+        if ($request->filled('search')) {
+                $query->where('ID_Pesanan', 'like', '%' . $request->search . '%')
+                    ->orWhere('ID_Pengiriman', 'like', '%' . $request->search . '%');
+            }
 
-        $pengiriman = $query->latest('ID_Pengiriman')->paginate(5);
-        $pesanan = Pesanan::all();
+            if ($request->filled('status')) {
+                $query->where('Status_Pengiriman', $request->status);
+            }
 
-        return view('pengiriman.index', compact('pengiriman', 'pesanan'));
+        $pengiriman = $query->latest('ID_Pengiriman')->paginate(10)->withQueryString();
+
+        $pesananSiapKirim = Pesanan::where('Status_Pembayaran', 'Lunas')
+            ->where('Status_Pesanan', 'Diproses')
+            ->where('Metode_Pengiriman', 'Dikirim')
+            ->whereNotIn('ID_Pesanan', function($query) {
+                $query->select('ID_Pesanan')->from('pengiriman');
+            })
+            ->get();
+
+        return view('pengiriman.index', [
+            'pengiriman' => $pengiriman,
+            'pesanan'    => $pesananSiapKirim
+        ]);
     }
 
-    /**
-     * Menyimpan data pengiriman baru
-     */
     public function store(Request $request)
     {
-        // Validasi dibuat agar menerima variasi huruf besar/kecil (lowercase, uppercase, camelcase)
         $request->validate([
             'ID_Pesanan'        => 'required|exists:pesanan,ID_Pesanan',
             'Tanggal_Kirim'     => 'required|date',
-            'Status_Pengiriman' => 'required|in:Disiapkan,Dikirim,Selesai,disiapkan,dikirim,selesai,DISIAPKAN,DIKIRIM,SELESAI',
+            'Status_Pengiriman' => 'required|in:Disiapkan,Dikirim,Selesai',
         ]);
-
-        // Format otomatis agar huruf pertama kapital (contoh: "Dikirim") sesuai standard ENUM database
-        $statusDiformat = ucfirst(strtolower($request->Status_Pengiriman));
 
         Pengiriman::create([
             'ID_Pesanan'        => $request->ID_Pesanan,
             'Tanggal_Kirim'     => $request->Tanggal_Kirim,
-            'Status_Pengiriman' => $statusDiformat,
+            'Status_Pengiriman' => $request->Status_Pengiriman,
         ]);
 
         return redirect()->route('pengiriman.index')->with('success', 'Data pengiriman berhasil dibuat!');
     }
 
-    /**
-     * Menampilkan detail pengiriman beserta barangnya
-     */
+
     public function show(string $id)
     {
-        $pengiriman = Pengiriman::with('pesanan.detailPesanan.barang')->findOrFail($id);
-
+        $pengiriman = Pengiriman::with(['pesanan.detailPesanan.barang'])->findOrFail($id);
         return view('pengiriman.show', compact('pengiriman'));
     }
 
-    /**
-     * Menampilkan halaman edit pengiriman
-     */
-    public function edit(string $id)
-    {
-        $pengiriman = Pengiriman::findOrFail($id);
-        return view('pengiriman.edit', compact('pengiriman'));
-    }
-
-    /**
-     * Memperbarui data pengiriman secara manual via form edit
-     */
     public function update(Request $request, string $id)
     {
-        // Validasi dibuat fleksibel terhadap huruf kapital/kecil
         $request->validate([
-            'Status_Pengiriman' => 'required|in:Disiapkan,Dikirim,Selesai,disiapkan,dikirim,selesai,DISIAPKAN,DIKIRIM,SELESAI',
+            'Status_Pengiriman' => 'required|string',
         ]);
 
-        $pengiriman = Pengiriman::findOrFail($id);
+        DB::beginTransaction();
 
-        // Format huruf pertama menjadi kapital sebelum disimpan
-        $statusDiformat = ucfirst(strtolower($request->Status_Pengiriman));
-
-        $pengiriman->update([
-            'Status_Pengiriman' => $statusDiformat,
-        ]);
-
-        return redirect()->route('pengiriman.index')->with('success', 'Status pengiriman berhasil diperbarui!');
-    }
-
-    /**
-     * Memperbarui status secara berjenjang/linear otomatis (Dipicu dari tombol detail show.blade.php)
-     */
-    public function updateStatus(Request $request, $id)
-{
-    $pengiriman = Pengiriman::findOrFail($id);
-    $currentStatus = strtolower($pengiriman->Status_Pengiriman);
-
-    if ($currentStatus === 'disiapkan') {
-        $pengiriman->Status_Pengiriman = 'Dikirim';
-    } elseif (in_array($currentStatus, ['dikirim', 'diantar', 'diantarkan'])) {
-        $pengiriman->Status_Pengiriman = 'Selesai';
-    } else {
-        // UBAH DISINI: Arahkan langsung ke route show, jangan pakai back()
-        return redirect()->route('pengiriman.show', $id)->with('error', 'Status tidak dapat diperbarui lagi.');
-    }
-
-    $pengiriman->save();
-
-    // UBAH DISINI JUGA: Arahkan langsung ke route show agar kembali dengan method GET yang benar
-    return redirect()->route('pengiriman.show', $id)->with('success', 'Status berhasil diperbarui menjadi: ' . $pengiriman->Status_Pengiriman);
-}
-
-    /**
-     * Menghapus data pengiriman
-     */
-    public function destroy(string $id)
-    {
         try {
-            $pengiriman = Pengiriman::findOrFail($id);
-            $pengiriman->delete();
+            $pengiriman = Pengiriman::with('pesanan')->findOrFail($id);
 
-            return redirect()->route('pengiriman.index')->with('success', 'Data pengiriman berhasil dihapus!');
+            $pengiriman->update([
+                'Status_Pengiriman' => $request->Status_Pengiriman
+            ]);
+
+            if ($request->Status_Pengiriman == 'Selesai' && $pengiriman->pesanan) {
+                $pengiriman->pesanan->update([
+                    'Status_Pesanan' => 'Selesai'
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->route('pengiriman.index', $id)->with('success', 'Status pengiriman berhasil diperbarui!');
+
         } catch (\Exception $e) {
-            return redirect()->route('pengiriman.index')->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Gagal memperbarui status: ' . $e->getMessage());
         }
     }
 }
