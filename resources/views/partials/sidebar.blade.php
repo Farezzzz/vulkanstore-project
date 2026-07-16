@@ -35,13 +35,16 @@
             <span>Pemesanan</span>
         </a>
 
-        <a href="#"
-            class="flex h-11 items-center gap-3 border-l-4 border-transparent pl-5 text-[12px] font-semibold text-[#45474C] transition hover:bg-[#ECEFF1] hover:text-[#091426]">
-            <i class="ri-truck-line text-[18px]"></i>
-            Pengiriman
+        <a href="{{ route('pengiriman.index') }}" 
+        class="flex h-11 items-center gap-3 border-l-4 pl-5 text-[12px] transition
+            {{ request()->routeIs('pengiriman.*')
+                ? 'border-[#855300] bg-[#E8EAED] font-semibold text-[#091426]'
+                : 'border-transparent font-semibold text-[#45474C] hover:bg-[#ECEFF1] hover:text-[#091426]' }}">
+            <i class="ri-database-2-line text-[18px]"></i>
+            <span>Pengiriman</span>
         </a>
 
-        <a href="#"
+        <a href="#"_
             class="flex h-11 items-center gap-3 border-l-4 border-transparent pl-5 text-[12px] font-semibold text-[#45474C] transition hover:bg-[#ECEFF1] hover:text-[#091426]">
             <i class="ri-file-chart-line text-[18px]"></i>
             Laporan

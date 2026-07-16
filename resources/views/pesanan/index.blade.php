@@ -89,7 +89,7 @@
                         <td class="px-6 py-5">
                             <div class="flex items-center justify-center">
                                 <a href="{{ route('pesanan.show', $item->ID_Pesanan) }}" class="text-gray-500 transition hover:text-[#091426]" title="Detail Pesanan">
-                                    <i class="ri-time-line text-[20px]"></i>
+                                    <i class="ri-information-line text-[20px]"></i>
                                 </a>
                             </div>
                         </td>
