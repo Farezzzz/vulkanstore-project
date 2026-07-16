@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Pengguna;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class PenggunaController extends Controller
 {
@@ -20,8 +21,8 @@ class PenggunaController extends Controller
             });
         }
 
-        if ($request->has('kategori') && $request->kategori != '') {
-            $query->where('Role', $request->kategori);
+        if ($request->has('status') && $request->status != '') {
+            $query->where('Status_Aktif', $request->status);
         }
 
         $pengguna = $query->latest('ID_Pengguna')->paginate(5);
@@ -75,11 +76,18 @@ class PenggunaController extends Controller
         return redirect()->route('pengguna.index')->with('success', 'Data pengguna berhasil diubah!');
     }
 
-    public function destroy(string $id)
+    public function destroy(int $id)
     {
+        if (Auth::id() == $id) {
+            return redirect()->back()->with('error', 'Tidak Bisa Menghapus Akun Sendiri!');
+        }
+
         $pengguna = Pengguna::findOrFail($id);
+        $pengguna->update([
+            'Status_Aktif' => 'Tidak Aktif'
+        ]);
         $pengguna->delete();
 
-        return redirect()->route('pengguna.index')->with('success', 'Data pengguna berhasil dihapus!');
+        return redirect()->route('pengguna.index')->with('success', 'Data pengguna berhasil dinonaktifkan dan dihapus!');
     }
 }

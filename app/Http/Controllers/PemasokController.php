@@ -19,7 +19,7 @@ class PemasokController extends Controller
         if ($request->has('kategori') && $request->kategori != '') {
             $query->where('Kategori_Pemasok', $request->kategori);
         }
-        $pemasok = $query->latest('ID_Pemasok')->paginate(5);
+        $pemasok = $query->latest('ID_Pemasok')->paginate(5)->withQueryString();
 
         return view('master.pemasok.index', compact('pemasok'));
     }
@@ -53,7 +53,7 @@ class PemasokController extends Controller
 
         $pemasok->update($request->all());
 
-        return redirect()->route('pemasok.index')->with('success', 'Data pemasok berhadil diubah!');
+        return redirect()->route('pemasok.index')->with('success', 'Data pemasok berhasil diubah!');
     }
 
     public function destroy(string $id)

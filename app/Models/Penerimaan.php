@@ -11,7 +11,7 @@ class Penerimaan extends Model
 
     protected $table = 'penerimaan';
     protected $primaryKey = 'ID_Penerimaan';
-    public $incrementing = false;
+    public $incrementing = true;
     public $timestamps = false;
     protected $fillable = [
         'ID_Penerimaan',
@@ -24,7 +24,7 @@ class Penerimaan extends Model
         'Tanggal_Masuk' => 'date',
     ];
 
- 
+
     public function pemasok()
     {
         return $this->belongsTo(Pemasok::class, 'ID_Pemasok', 'ID_Pemasok');

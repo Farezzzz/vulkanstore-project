@@ -20,15 +20,17 @@ class BarangController extends Controller
             });
         }
 
-        // Filter berdasarkan Kategori Barang
-        if ($request->has('kategori') && $request->kategori != '') {
-            $query->where('Kategori_Barang', $request->kategori);
+        // Filter berdasarkan stok
+        if ($request->has('stok_status')) {
+        if ($request->stok_status == 'menipis') {
+            $query->where('Stok_Tersedia', '<=', 15);
+        } elseif ($request->stok_status == 'aman') {
+            $query->where('Stok_Tersedia', '>', 15);
         }
+    }
 
-        // Menggunakan latest berdasarkan ID_Barang dan paginate 5 data
-        $barang = $query->latest('ID_Barang')->paginate(5);
+        $barang = $query->latest('ID_Barang')->paginate(5)->withQueryString();
 
-        // Mengarah ke folder views/master/barang/index.blade.php
         return view('master.barang.index', compact('barang'));
     }
 
@@ -38,7 +40,7 @@ class BarangController extends Controller
     {
         $request->validate([
             'Nama_Barang' => 'required|string|max:50',
-            'Kategori_Barang' => 'required|string|max:50', 
+            'Kategori_Barang' => 'required|string|max:50',
             'Stok' => 'required|integer|min:0',
         ]);
 
