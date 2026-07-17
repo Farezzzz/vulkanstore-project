@@ -10,14 +10,15 @@ class Pesanan extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'ID_Pengguna', 
-        'Nama_Pelanggan', 
-        'Alamat', 
-        'Tanggal', 
-        'Total_Tagihan', 
-        'Jarak_Tempuh_Km', 
-        'Status_Pesanan', 
-        'Status_Pembayaran'
+        'ID_Pengguna',
+        'Nama_Pelanggan',
+        'Alamat',
+        'Tanggal',
+        'Total_Tagihan',
+        'Jarak_Tempuh_Km',
+        'Status_Pesanan',
+        'Status_Pembayaran',
+        'Metode_Pengiriman'
     ];
 
     public function pengguna()

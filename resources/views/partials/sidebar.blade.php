@@ -24,25 +24,25 @@
             {{ request()->routeIs('penerimaan.*')
                 ? 'border-[#855300] bg-[#E8EAED] font-semibold text-[#091426]'
                 : 'border-transparent font-semibold text-[#45474C] hover:bg-[#ECEFF1] hover:text-[#091426]' }}">
-            <i class="ri-box-3-line text-[18px]"></i> Penerimaan
+            <i class="ri-archive-line text-[18px]"></i> Penerimaan
         </a>
 
-       
-        <a href="{{ route('pesanan.index') }}" 
+
+        <a href="{{ route('pesanan.index') }}"
         class="flex h-11 items-center gap-3 border-l-4 pl-5 text-[12px] transition
             {{ request()->routeIs('pesanan.*')
                 ? 'border-[#855300] bg-[#E8EAED] font-semibold text-[#091426]'
                 : 'border-transparent font-semibold text-[#45474C] hover:bg-[#ECEFF1] hover:text-[#091426]' }}">
-            <i class="ri-database-2-line text-[18px]"></i>
+            <i class="ri-shopping-cart-2-line text-[18px]"></i>
             <span>Pemesanan</span>
         </a>
 
-        <a href="{{ route('pengiriman.index') }}" 
+        <a href="{{ route('pengiriman.index') }}"
         class="flex h-11 items-center gap-3 border-l-4 pl-5 text-[12px] transition
             {{ request()->routeIs('pengiriman.*')
                 ? 'border-[#855300] bg-[#E8EAED] font-semibold text-[#091426]'
                 : 'border-transparent font-semibold text-[#45474C] hover:bg-[#ECEFF1] hover:text-[#091426]' }}">
-            <i class="ri-database-2-line text-[18px]"></i>
+            <i class="ri-truck-line text-[18px]"></i>
             <span>Pengiriman</span>
         </a>
 

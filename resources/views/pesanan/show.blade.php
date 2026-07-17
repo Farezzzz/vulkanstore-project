@@ -22,38 +22,49 @@
     <!-- MAIN CONTENT CONTAINER -->
     <main class="w-full px-6 md:px-12 mt-8">
 
-        <!-- TITLE BAR WITH STATUS BADGE -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
             <h1 class="text-[32px] font-bold text-[#091426]">Detail Pesanan</h1>
-            
+
             <div class="flex items-center gap-3">
-                <!-- Status Badge Pill -->
-                <span class="inline-flex items-center gap-2 rounded-full bg-[#BA1A1A] px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-white shadow-sm">
-                    <span class="h-1.5 w-1.5 rounded-full bg-white animate-pulse"></span> • {{ $pesanan->Status_Pembayaran == 'LUNAS' ? 'LUNAS' : 'MENUNGGU PEMBAYARAN' }}
-                </span>
+                <span class="inline-flex items-center gap-2 rounded-full bg-[#091426] px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-white shadow-sm">
+                    Metode: {{ $pesanan->Metode_Pengiriman }}
+                    </span>
+                @if($pesanan->Status_Pesanan == 'Dibatalkan')
+                    <span class="inline-flex items-center gap-2 rounded-full bg-gray-500 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-white shadow-sm">
+                        <span class="h-1.5 w-1.5 rounded-full bg-white"></span> DIBATALKAN
+                    </span>
+                @elseif($pesanan->Status_Pesanan == 'Selesai')
+                    <span class="inline-flex items-center gap-2 rounded-full bg-green-600 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-white shadow-sm">
+                        <span class="h-1.5 w-1.5 rounded-full bg-white"></span> SELESAI
+                    </span>
+                @elseif($pesanan->Status_Pembayaran == 'Belum Lunas')
+                    <span class="inline-flex items-center gap-2 rounded-full bg-[#BA1A1A] px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-white shadow-sm">
+                        <span class="h-1.5 w-1.5 rounded-full bg-white animate-pulse"></span> MENUNGGU PEMBAYARAN
+                    </span>
+                @else
+                    <span class="inline-flex items-center gap-2 rounded-full bg-[#855300] px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-white shadow-sm">
+                        <span class="h-1.5 w-1.5 rounded-full bg-white animate-pulse"></span> DIPROSES
+                    </span>
+                @endif
             </div>
         </div>
 
-        <!-- CARD 1: INFORMASI UMUM (Struktur Grid 3 Kolom) -->
         <div class="bg-white border border-gray-200 rounded shadow-sm mb-6">
             <div class="p-6 border-b border-gray-200 flex items-center gap-3">
                 <i class="ri-information-line text-[20px] text-gray-400"></i>
                 <h2 class="text-[16px] font-bold text-[#091426]">Informasi Umum</h2>
             </div>
-            
+
             <div class="p-8">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-y-8 gap-x-12">
-                    <!-- Baris 1 / Kolom 1 -->
                     <div>
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">ID PESANAN</p>
                         <p class="text-[15px] font-bold text-[#091426]">{{ $pesanan->ID_Pesanan }}</p>
                     </div>
-                    <!-- Baris 1 / Kolom 2 -->
                     <div>
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">NAMA PELANGGAN</p>
                         <p class="text-[15px] font-bold text-[#091426]">{{ $pesanan->Nama_Pelanggan }}</p>
                     </div>
-                    <!-- Baris 1 / Kolom 3 -->
                     <div>
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">TANGGAL PESANAN</p>
                         <p class="text-[15px] font-bold text-[#091426]">
@@ -61,18 +72,16 @@
                         </p>
                     </div>
 
-                    <!-- Baris 2 / Kolom 1 -->
                     <div>
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">TOTAL BAYAR</p>
                         <p class="text-[26px] font-extrabold text-[#855300] leading-none">
                             Rp {{ number_format($pesanan->Total_Tagihan, 0, ',', '.') }}
                         </p>
                     </div>
-                    <!-- Baris 2 / Kolom 2 -->
                     <div>
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">STATUS PEMBAYARAN</p>
                         <div class="flex items-center gap-1.5 mt-1">
-                            @if($pesanan->Status_Pembayaran == 'LUNAS')
+                            @if($pesanan->Status_Pembayaran == 'Lunas')
                                 <i class="ri-checkbox-circle-line text-[18px] text-green-600"></i>
                                 <span class="text-[14px] font-bold text-green-600">Lunas</span>
                             @else
@@ -81,7 +90,6 @@
                             @endif
                         </div>
                     </div>
-                    <!-- Baris 2 / Kolom 3 -->
                     <div>
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">ALAMAT PENGIRIMAN</p>
                         <p class="text-[14px] font-medium text-gray-600 leading-relaxed">{{ $pesanan->Alamat }}</p>
@@ -90,7 +98,7 @@
             </div>
         </div>
 
-        <!-- CARD 2: RINCIAN BARANG -->
+        <!-- CARD 2 -->
         <div class="bg-white border border-gray-200 rounded shadow-sm overflow-hidden mb-6">
             <div class="p-6 border-b border-gray-200 flex items-center gap-3">
                 <i class="ri-archive-line text-[20px] text-gray-400"></i>
@@ -110,7 +118,7 @@
                     <tbody class="divide-y divide-gray-200">
                         @forelse($pesanan->detailPesanan as $detail)
                         @php
-                            $hargaSatuan = $detail->barang->Harga_Jual ?? 0; 
+                            $hargaSatuan = $detail->barang->Harga_Jual ?? 0;
                             $subtotal = $detail->Kuantitas * $hargaSatuan;
                         @endphp
                         <tr class="hover:bg-gray-50/50 transition">
@@ -144,28 +152,90 @@
             </div>
         </div>
 
-        <!-- TOMBOL AKSI BAWAH -->
         <div class="flex justify-end gap-3 mt-8">
-            <form action="{{ route('pesanan.destroy', $pesanan->ID_Pesanan) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini?')">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="h-[42px] px-6 rounded border border-gray-300 bg-white text-[11px] font-bold uppercase tracking-wider text-gray-600 transition hover:bg-gray-50 shadow-sm">
-                    BATALKAN PESANAN
-                </button>
-            </form>
+            @if($pesanan->Status_Pesanan != 'Selesai' && $pesanan->Status_Pembayaran != 'Dibatalkan')
+                @if($pesanan->Status_Pembayaran == 'Belum Lunas')
 
-            @if($pesanan->Status_Pembayaran != 'LUNAS')
-            <form action="{{ route('pesanan.update', $pesanan->ID_Pesanan) }}" method="POST">
-                @csrf
-                @method('PUT')
-                <input type="hidden" name="update_pembayaran" value="LUNAS">
-                <button type="submit" class="h-[42px] px-6 rounded bg-[#855300] text-[11px] font-bold uppercase tracking-wider text-white transition hover:bg-[#6e4600] shadow-sm">
-                    UPDATE STATUS PEMBAYARAN
-                </button>
-            </form>
+                    <form id="form-batal" action="{{ route('pesanan.update', $pesanan->ID_Pesanan) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="Status_Pembayaran" value="BELUM LUNAS">
+                        <input type="hidden" name="Status_Pesanan" value="DIBATALKAN">
+                        <button type="button" onclick="konfirmasiAksi('form-batal', 'Batalkan Pesanan?', 'Pesanan akan dibatalkan dan stok dikembalikan.', 'warning', 'Ya, Batalkan!')" class="h-[42px] px-6 rounded border border-gray-300 bg-white text-[11px] font-bold uppercase tracking-wider text-red-600 transition hover:bg-red-50 shadow-sm">
+                            BATALKAN PESANAN
+                        </button>
+                    </form>
+
+                    <form id="form-lunas" action="{{ route('pesanan.update', $pesanan->ID_Pesanan) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="Status_Pembayaran" value="Lunas">
+                        <input type="hidden" name="Status_Pesanan" value="Diproses">
+                        <button type="button" onclick="konfirmasiAksi('form-lunas', 'Tandai Lunas?', 'Status pesanan akan diubah menjadi DIPROSES.', 'info', 'Ya, Proses!')" class="h-[42px] px-6 rounded bg-[#855300] text-[11px] font-bold uppercase tracking-wider text-white transition hover:bg-[#6e4600] shadow-sm">
+                            UPDATE STATUS PEMBAYARAN
+                        </button>
+                    </form>
+                @endif
+
+                @if($pesanan->Status_Pembayaran == 'Lunas' && $pesanan->Status_Pesanan == 'Diproses' && $pesanan->Metode_Pengiriman == 'Diambil Sendiri')
+                    <form id="form-selesai" action="{{ route('pesanan.update', $pesanan->ID_Pesanan) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="Status_Pembayaran" value="Lunas">
+                        <input type="hidden" name="Status_Pesanan" value="Selesai">
+                        <button type="button" onclick="konfirmasiAksi('form-selesai', 'Selesaikan Pesanan?', 'Tandai pesanan ini telah selesai dikirim atau diambil.', 'success', 'Ya, Selesai!')" class="h-[42px] px-6 rounded bg-[#855300] text-[11px] font-bold uppercase tracking-wider text-white transition hover:bg-[#6e4600] shadow-sm">
+                            SELESAIKAN PESANAN
+                        </button>
+                    </form>
+                @endif
+
             @endif
         </div>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function konfirmasiAksi(formId, title, text, icon, confirmText) {
+            Swal.fire({
+                title: title,
+                text: text,
+                icon: icon,
+                showCancelButton: true,
+                confirmButtonColor: '#091426',
+                cancelButtonColor: '#d33',
+                confirmButtonText: confirmText,
+                cancelButtonText: 'Kembali'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(formId).submit();
+                }
+            });
+        }
+
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Aksi Ditolak!',
+                text: '{{ session('error') }}',
+                confirmButtonColor: '#091426'
+            });
+        @endif
+
+        @if ($errors->any())
+            let errorHtml = '<ul style="text-align: left; margin-left: 20px;">';
+            @foreach ($errors->all() as $error)
+                errorHtml += '<li>{{ $error }}</li>';
+            @endforeach
+            errorHtml += '</ul>';
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal!',
+                html: errorHtml,
+                confirmButtonColor: '#091426'
+            });
+        @endif
+    </script>
 
 </body>
 </html>
