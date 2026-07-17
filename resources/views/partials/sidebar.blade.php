@@ -46,7 +46,7 @@
             <span>Pengiriman</span>
         </a>
 
-        <a href="#"_
+        <a href="{{ route('laporan.index') }}"_
             class="flex h-11 items-center gap-3 border-l-4 border-transparent pl-5 text-[12px] font-semibold text-[#45474C] transition hover:bg-[#ECEFF1] hover:text-[#091426]">
             <i class="ri-file-chart-line text-[18px]"></i>
             Laporan
