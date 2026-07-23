@@ -7,7 +7,7 @@ use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\PenerimaanController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\PengirimanController;
-
+use App\Http\Controllers\LaporanController;
 Route::get('/', function () {
     return redirect()->route('pemasok.index');
 });
@@ -20,7 +20,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('pesanan', PesananController::class); 
     Route::put('/pengiriman/{id}/update-status', [PengirimanController::class, 'updateStatus'])->name('pengiriman.updateStatus');
     Route::resource('pengiriman', PengirimanController::class); 
-    
+    Route::resource('laporan', LaporanController::class); 
+    Route::get('/laporan/index', [LaporanController::class, 'bukuKas'])->name('laporan.index');
 });
 
 require __DIR__ . '/auth.php';

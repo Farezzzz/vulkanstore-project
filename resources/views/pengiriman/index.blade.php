@@ -90,7 +90,7 @@
                     @forelse ($pengiriman as $item)
                     <tr class="border-b border-gray-100 transition hover:bg-slate-50">
                         <td class="px-6 py-5 font-semibold text-[#091426]">{{ $item->ID_Pengiriman }}</td>
-                        <td class="px-6 py-5 font-semibold text-[#091426]">#{{ $item->ID_Pesanan }}</td>
+                        <td class="px-6 py-5 font-semibold text-[#091426]">{{ $item->ID_Pesanan }}</td>
                         <td class="px-6 py-5 font-semibold text-[#091426]">{{ $item->pesanan->Nama_Pelanggan ?? '-' }}</td>
 
                         <td class="px-6 py-5 text-[#091426] font-medium truncate max-w-[250px]" title="{{ $item->pesanan->Alamat ?? '-' }}">
