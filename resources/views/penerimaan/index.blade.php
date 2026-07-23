@@ -127,7 +127,7 @@
 
                     <div class="mb-8">
                         <label class="mb-2 block text-[12px] font-semibold text-[#091426]">Tanggal Masuk</label>
-                        <input type="date" name="Tanggal_Masuk" id="Tanggal_Masuk" value="{{ date('Y-m-d') }}" class="h-[41px] w-full rounded border border-slate-300 px-4 text-sm text-[#091426] outline-none focus:border-[#091426]">
+                        <input type="date" name="Tanggal_Masuk" id="Tanggal_Masuk" value="{{ date('Y-m-d') }}" max="{{ now()->toDateString() }}" class="h-[41px] w-full rounded border border-slate-300 px-4 text-sm text-[#091426] outline-none focus:border-[#091426]">
                     </div>
 
                     <div class="flex justify-end gap-3">
@@ -195,7 +195,8 @@
             if (!idPemasok || !tglMasuk) {
                 return Swal.fire({
                     icon: 'warning',
-                    text: 'Pemasok dan Tanggal wajib diisi!',
+                    title: 'Data Belum Lengkap!',
+                    text: 'Pastikan Pemasok dan Tanggal terisi semua!',
                     confirmButtonColor: '#091426',
                     target: document.getElementById('modal_tambah')
                 });
@@ -227,24 +228,26 @@
             if (!brg.value || qty == "" || harga == "") {
                 Swal.fire({
                     icon: 'warning',
-                    text: 'Pastikan barang, kuantitas, dan harga beli diisi!',
+                    title: 'Data Belum Lengkap!',
+                    text: 'Pastikan Barang, Kuantitas, dan Harga Beli/Unit diisi!',
                     confirmButtonColor: '#091426',
                     target: document.getElementById('modal_tambah')
                 });
                 return;
             }
 
-            let errorList = [];
-            if (isNaN(qty) || qty <= 0) errorList.push("• Kuantitas tidak boleh kurang dari 1!");
-            if (isNaN(harga) || harga < 0) errorList.push("• Harga tidak boleh kurang dari 1!");
+            const regexAngkaBulat = /^\d+$/;
 
-            if (errorList.length > 0) {
-                return Swal.fire({
-                    icon: 'error',
-                    html: `<div style="text-align: left;">${errorList.join('<br>')}</div>`,
-                    confirmButtonColor: '#091426',
-                    target: document.getElementById('modal_tambah')
-                });
+                if (!regexAngkaBulat.test(qty) || !regexAngkaBulat.test(harga)) {
+                    event.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Format Kuantitas atau Harga Beli/Unit tidak sesuai!',
+                        text: 'Kuantitas dan Harga Beli/Unit harus berupa angka bulat positif (tidak boleh minus, desimal, atau huruf e)!',
+                        confirmButtonColor: '#d33',
+                        target: document.getElementById('modal_tambah')
+                    });
+                    return;
             }
 
             let nama = brg.options[brg.selectedIndex].getAttribute('data-nama');
@@ -277,6 +280,7 @@
             if (document.getElementById('keranjang_list').innerHTML.trim() === '') {
                 Swal.fire({
                     icon: 'error',
+                    title: 'Keranjang (Detail Barang yang dipesan) masih kosong!',
                     text: 'Tambahkan minimal 1 barang ke keranjang!',
                     confirmButtonColor: '#091426',
                     target: document.getElementById('modal_tambah')

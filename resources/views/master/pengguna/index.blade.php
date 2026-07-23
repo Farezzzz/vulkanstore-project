@@ -22,6 +22,29 @@
         <a href="{{ route('pengguna.index') }}" class="border-b-2 border-[#855300] px-6 py-3 text-[12px] font-semibold uppercase text-[#091426]">Data Pengguna</a>
     </div>
 
+    {{-- ALERT SUCCESS --}}
+    @if(session('success'))
+    <div id="toast-success" class="toast toast-top toast-end z-50 mt-16 transition-opacity duration-500">
+        <div class="alert alert-success flex items-center gap-2 rounded bg-green-500 px-6 py-4 text-white shadow-lg">
+            <i class="ri-checkbox-circle-line text-2xl"></i>
+            <div>
+                <h3 class="font-bold text-[14px]">Berhasil!</h3>
+                <div class="text-[12px]">{{ session('success') }}</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        setTimeout(() => {
+            const toast = document.getElementById('toast-success');
+            if (toast) {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 500);
+            }
+        }, 5000);
+    </script>
+    @endif
+
     {{-- Container Tabel & Filter --}}
     <div class="w-full overflow-hidden rounded-[8px] border border-gray-200 bg-white shadow-sm">
 
@@ -40,7 +63,7 @@
                 </div>
 
                 <select name="status" onchange="this.form.submit()" class="h-[38px] cursor-pointer rounded border border-gray-300 px-4 text-[12px] font-semibold text-[#45474C] outline-none hover:bg-gray-50 focus:border-[#091426]">
-                    <option value="">Filter</option>
+                    <option value="">Filter Status</option>
                     <option value="Aktif" {{ request('status') == 'Aktif' ? 'selected' : '' }}>Aktif</option>
                     <option value="Tidak Aktif" {{ request('status') == 'Tidak Aktif' ? 'selected' : '' }}>Tidak Aktif</option>
                 </select>
@@ -66,7 +89,7 @@
                     <td class="px-6 py-4 font-semibold text-[#091426]">{{ $item->Nama_Lengkap }}</td>
                     <td class="px-6 py-4 font-semibold text-[#091426]">{{ $item->Email }}</td>
                     <td class="px-6 py-4 font-semibold text-[#091426]">
-                        <span class="uppercasefont-semibold text-[#091426]">
+                        <span class="uppercase font-semibold text-[#091426]">
                             {{ $item->Role }}
                         </span>
                     </td>
@@ -84,7 +107,7 @@
                     <td class="px-6 py-4">
                         <div class="flex items-center justify-center gap-4">
                             {{-- Tombol Edit --}}
-                            <button onclick="bukaModalEdit({{ json_encode($item) }})" class="text-gray-400 hover:text-blue-600 transition">
+                            <button onclick='bukaModalEdit(@json($item))' class="text-gray-400 hover:text-blue-600 transition">
                                 <i class="ri-pencil-line text-base"></i>
                             </button>
                             @if(auth()->id() != $item->ID_Pengguna)
@@ -124,30 +147,27 @@
     <dialog id="modal_tambah" class="modal">
         <div class="modal-box rounded-[8px] bg-white p-6 shadow-lg max-w-md">
             <h3 class="mb-5 text-[20px] font-bold text-[#091426]">Tambah Pengguna Baru</h3>
-            <form action="{{ route('pengguna.store') }}" method="POST" class="space-y-4">
+            <form action="{{ route('pengguna.store') }}" method="POST" class="space-y-4" onsubmit="return validasiForm(event, 'modal_tambah')">
                 @csrf
                 <div>
                     <label class="block text-[12px] font-semibold text-[#45474C] mb-1">Nama Lengkap</label>
-                    <input type="text" name="Nama_Lengkap" required placeholder="Contoh: Budi Pratama" class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400">
+                    <input type="text" name="Nama_Lengkap" placeholder="Contoh: Budi Pratama" class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400">
                 </div>
                 <div>
                     <label class="block text-[12px] font-semibold text-[#45474C] mb-1">Email</label>
-                    <input type="email" name="Email" required placeholder="Contoh: budi@vulkanstore.com" class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400">
+                    <input type="text" name="Email" placeholder="Contoh: budi@vulkanstore.com" class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400">
                 </div>
                 <div>
                     <label class="block text-[12px] font-semibold text-[#45474C] mb-1">Role</label>
-                    <input type="text" name="Role" required placeholder="Contoh: Admin / Gudang" class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400">
+                    <input type="text" name="Role" value="Admin" readonly class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400">
                 </div>
                 <div>
                     <label class="block text-[12px] font-semibold text-[#45474C] mb-1">Kata Sandi</label>
-                    <input type="password" name="Kata_Sandi" required class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400">
+                    <input type="password" name="Kata_Sandi" placeholder="Masukkan kata sandi..." class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400">
                 </div>
                 <div>
                     <label class="block text-[12px] font-semibold text-[#45474C] mb-1">Status</label>
-                    <select name="Status_Aktif" required class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400 bg-white">
-                        <option value="Aktif">Aktif</option>
-                        <option value="Tidak Aktif">Tidak Aktif</option>
-                    </select>
+                    <input type="text" name="Status_Aktif" value="Aktif" readonly class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400">
                 </div>
 
                 <div class="h-6"></div>
@@ -160,20 +180,21 @@
         </div>
         <form method="dialog" class="modal-backdrop"><button>close</button></form>
     </dialog>
-    {{-- {{MODAL EDIT }} --}}
+
+    {{-- MODAL EDIT --}}
     <dialog id="modal_edit" class="modal">
         <div class="modal-box rounded-[8px] bg-white p-6 shadow-lg max-w-md">
             <h3 class="mb-5 text-[20px] font-bold text-[#091426]">Ubah Data Pengguna</h3>
-            <form id="form_edit" method="POST" class="space-y-4">
+            <form id="form_edit" method="POST" class="space-y-4" onsubmit="return validasiForm(event, 'modal_edit')">
                 @csrf
                 @method('PUT')
                 <div>
                     <label class="block text-[12px] font-semibold text-[#45474C] mb-1">Nama Lengkap</label>
-                    <input type="text" id="edit_nama" name="Nama_Lengkap" required class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400">
+                    <input type="text" id="edit_nama" name="Nama_Lengkap" placeholder="Ubah nama pengguna..." class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400">
                 </div>
                 <div>
                     <label class="block text-[12px] font-semibold text-[#45474C] mb-1">Email</label>
-                    <input type="email" id="edit_email" name="Email" required class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400">
+                    <input type="text" id="edit_email" name="Email" placeholder="Ubah email pengguna..." class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400">
                 </div>
                 <div>
                     <label class="block text-[12px] font-semibold text-[#45474C] mb-1">Role</label>
@@ -181,11 +202,11 @@
                 </div>
                 <div>
                     <label class="block text-[12px] font-semibold text-[#45474C] mb-1">Kata Sandi Baru <span class="text-gray-400 font-normal">(Kosongkan jika tidak diganti)</span></label>
-                    <input type="password" name="Kata_Sandi" class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400">
+                    <input type="password" name="Kata_Sandi" placeholder="Ketik sandi baru..." class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400">
                 </div>
                 <div>
                     <label class="block text-[12px] font-semibold text-[#45474C] mb-1">Status</label>
-                    <select id="edit_status" name="Status_Aktif" required class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400 bg-white">
+                    <select id="edit_status" name="Status_Aktif" class="w-full h-[40px] rounded border border-gray-200 px-3 text-[13px] outline-none focus:border-gray-400 bg-white">
                         <option value="Aktif">Aktif</option>
                         <option value="Tidak Aktif">Tidak Aktif</option>
                     </select>
@@ -200,8 +221,45 @@
         <form method="dialog" class="modal-backdrop"><button>close</button></form>
     </dialog>
 
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        function validasiForm(event, modalId) {
+            const form = event.target;
+
+            const nama = form.elements['Nama_Lengkap'].value.trim();
+            const email = form.elements['Email'].value.trim();
+            const role = form.elements['Role'].value.trim();
+            const password = form.elements['Kata_Sandi'].value.trim();
+
+            if (!nama || !email || (modalId === 'modal_tambah' && !password)) {
+                event.preventDefault();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Data Belum Lengkap!',
+                    text: 'Pastikan Nama, Email, dan Password sudah terisi semua!',
+                    confirmButtonColor: '#091426',
+                    target: document.getElementById(modalId)
+                });
+                return false;
+            }
+            const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!regexEmail.test(email)) {
+                event.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Format Email tidak sesuai!',
+                    text: 'Gunakan "@" di email (contoh: admin@gmail.com)!',
+                    confirmButtonColor: '#d33',
+                    target: document.getElementById(modalId)
+                });
+                form.elements['Email'].focus();
+
+                return false;
+            }
+            return true;
+        }
+
         function bukaModalEdit(user) {
             document.getElementById('form_edit').action = `/pengguna/${user.ID_Pengguna}`;
             document.getElementById('edit_nama').value = user.Nama_Lengkap;
@@ -209,12 +267,6 @@
             document.getElementById('edit_role').value = user.Role;
             document.getElementById('edit_status').value = user.Status_Aktif;
             modal_edit.showModal();
-        }
-
-        function bukaModalHapus(id, nama) {
-            document.getElementById('form_hapus').action = `/pengguna/${id}`;
-            document.getElementById('hapus_nama').textContent = nama;
-            modal_hapus.showModal();
         }
 
         function confirmDelete(button) {

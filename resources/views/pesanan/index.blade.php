@@ -172,7 +172,7 @@
 
                     <div class="mb-4">
                         <label class="mb-2 block text-[12px] font-semibold text-[#091426]">Tanggal Pesanan</label>
-                        <input type="date" id="input_tanggal" name="Tanggal" value="{{ date('Y-m-d') }}" class="h-[41px] w-full rounded border border-slate-300 px-4 text-sm text-[#091426] outline-none focus:border-[#091426]">
+                        <input type="date" id="input_tanggal" name="Tanggal" value="{{ date('Y-m-d') }}" max="{{ now()->toDateString() }}" class="h-[41px] w-full rounded border border-slate-300 px-4 text-sm text-[#091426] outline-none focus:border-[#091426]">
                     </div>
 
                     <div class="mb-4">
@@ -272,7 +272,8 @@
             if (!nama || !tanggal || !alamat || !jarak) {
                 return Swal.fire({
                     icon: 'warning',
-                    text: 'Semua field (Nama, Tanggal, Alamat, Jarak) wajib diisi!',
+                    title: 'Data Belum Lengkap!',
+                    text: 'Pastikan Nama, Tanggal, Alamat, dan Jarak diisi!',
                     confirmButtonColor: '#091426',
                     target: document.getElementById('modal_tambah')
                 });
@@ -281,6 +282,7 @@
             if (parseFloat(jarak) <= 0) {
                 return Swal.fire({
                     icon: 'error',
+                    title: 'Format Jarak tidak sesuai!',
                     text: 'Jarak tempuh tidak valid! Harus lebih dari 0 km.',
                     confirmButtonColor: '#091426',
                     target: document.getElementById('modal_tambah')
@@ -307,7 +309,12 @@
             let idBarang = brg.value;
 
             if (!idBarang || isNaN(qty)) {
-                Swal.fire({ icon: 'warning', text: 'Pastikan barang dan kuantitas diisi!', confirmButtonColor: '#091426', target: document.getElementById('modal_tambah') });
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Data Belum Lengkap!',
+                    text: 'Pastikan Barang dan Kuantitas diisi!',
+                    confirmButtonColor: '#091426',
+                    target: document.getElementById('modal_tambah') });
                 return;
             }
 
@@ -319,7 +326,7 @@
                 return Swal.fire({
                     icon: 'error',
                     title: 'Ditolak!',
-                    text: 'Barang ini sudah ada di keranjang. Jika ingin mengubah jumlah, hapus dulu barang yang ada di list.',
+                    text: 'Barang ini sudah ada di keranjang. Jika ingin mengubah jumlah, hapus dulu barang yang ada di keranjang.',
                     confirmButtonColor: '#091426',
                     target: document.getElementById('modal_tambah')
                 });
@@ -426,6 +433,7 @@
             if (document.getElementById('keranjang_list').innerHTML.trim() === '') {
                 Swal.fire({
                     icon: 'error',
+                    title: 'Keranjang (Detail Barang yang dipesan) masih kosong!',
                     text: 'Tambahkan minimal 1 barang ke keranjang pesanan!',
                     confirmButtonColor: '#091426',
                     target: document.getElementById('modal_tambah')

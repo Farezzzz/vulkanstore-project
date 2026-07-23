@@ -41,7 +41,8 @@ class BarangController extends Controller
         $request->validate([
             'Nama_Barang' => 'required|string|max:50',
             'Kategori_Barang' => 'required|string|max:50',
-            'Stok' => 'required|integer|min:0',
+            'Stok_Tersedia' => 'required|integer|min:0',
+            'Harga_Jual' => 'required|integer|min:0',
         ]);
 
         Barang::create($request->all());
@@ -56,7 +57,8 @@ class BarangController extends Controller
         $request->validate([
             'Nama_Barang' => 'required|string|max:50',
             'Kategori_Barang' => 'required|string|max:50',
-            'Stok' => 'required|integer|min:0',
+            'Stok_Tersedia' => 'required|integer|min:0',
+            'Harga_Jual' => 'required|integer|min:0',
         ]);
 
         $barang = Barang::findOrFail($id);

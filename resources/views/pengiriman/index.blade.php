@@ -180,7 +180,7 @@
 
                     <div>
                         <label class="mb-2 block text-[12px] font-semibold text-[#091426]">Jadwal Tanggal Kirim</label>
-                        <input type="date" name="Tanggal_Kirim" value="{{ date('Y-m-d') }}" class="h-[41px] w-full rounded border border-slate-300 px-4 text-sm text-[#091426] outline-none focus:border-[#091426] focus:ring-1 focus:ring-[#091426]">
+                        <input type="date" name="Tanggal_Kirim" value="{{ date('Y-m-d') }}" min="{{ now()->toDateString() }}" class="h-[41px] w-full rounded border border-slate-300 px-4 text-sm text-[#091426] outline-none focus:border-[#091426] focus:ring-1 focus:ring-[#091426]">
                     </div>
 
                     <input type="hidden" name="Status_Pengiriman" value="Disiapkan">
@@ -205,31 +205,17 @@
             const idPesanan = form.elements['ID_Pesanan'].value;
             const tanggalKirim = form.elements['Tanggal_Kirim'].value;
 
-            if (!idPesanan) {
+            if (!idPesanan || !tanggalKirim) {
                 event.preventDefault();
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Pilihan Kosong!',
-                    text: 'Silakan pilih ID Pesanan terlebih dahulu.',
+                    title: 'Data Belum Lengkap!',
+                    text: 'Pastikan Pesanan Siap Kirim dan Jadwal Tanggal Kirim sudah terisi!',
                     confirmButtonColor: '#091426',
                     target: document.getElementById('modal_tambah')
                 });
                 return false;
             }
-
-            if (!tanggalKirim) {
-                event.preventDefault();
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Tanggal Kosong!',
-                    text: 'Silakan tentukan Jadwal Tanggal Kirim pengiriman.',
-                    confirmButtonColor: '#091426',
-                    target: document.getElementById('modal_tambah')
-                });
-                return false;
-            }
-
-            return true;
         }
     </script>
 
